@@ -17,16 +17,36 @@ const jobpost = async (req, res) => {
 };
 
 const jobfetch = async (req, res) => {
-  const userId = req.user._id; // Get user ID from JWT token
+  const userId = req.user._id;
 
   try {
-    const jobs = await Job.find({ userid: userId }); // Fetch jobs for the user
-    res.json(jobs);
+    // 1. Fetch jobs created by the logged-in user
+    const jobs = await Job.find({ userid: userId });
+
+    // 2. Extract all job._id values
+    const jobIds = jobs.map((job) => job._id.toString());
+
+    // 3. Fetch all bookings where jobId is one of the user's job IDs
+    const bookings = await JobBooking.find({ jobId: { $in: jobIds } });
+
+    // 4. Attach matching bookings to each job
+    const jobsWithApplications = jobs.map((job) => {
+      const applications = bookings.filter(
+        (booking) => booking.jobId.toString() === job._id.toString()
+      );
+      return {
+        ...job.toObject(),
+        applications,
+      };
+    });
+
+    res.json(jobsWithApplications);
   } catch (error) {
     console.error("Error fetching job applications:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 const getAllJob = async (req, res) => {
   try {
     const jobs = await Job.find({}).populate("userid", "name"); // Populate username from User
@@ -41,8 +61,6 @@ const applyJob = async (req, res) => {
   try {
     const jobId = req.params.id;
     const userId = req.user?._id;
-
-    console.log(`Job ID: ${jobId}, User ID: ${userId}`);
 
     if (!jobId) {
       return res.status(400).json({ message: "Invalid job ID" });
@@ -77,9 +95,6 @@ const applyJob = async (req, res) => {
       jobId: job._id,
       status: "applied",
     });
-
-    console.log("Job Booking:", jobBooking);
-
     res.status(200).json({ message: "Applied successfully", jobBooking });
   } catch (error) {
     console.error("Error applying for job:", error);
@@ -106,12 +121,12 @@ const getAppliedJobs = async (req, res) => {
         },
       })
       .sort({ createdAt: -1 });
-
     const formatted = bookings.map((booking) => ({
       jobName: booking.jobId?.title || "N/A",
       postedBy: booking.jobId?.userid?.name || "Unknown",
       status: booking.status,
       appliedAt: booking.createdAt,
+      id: booking.jobId._id,
     }));
 
     res.status(200).json(formatted);
@@ -121,7 +136,87 @@ const getAppliedJobs = async (req, res) => {
   }
 };
 
+const acceptJob = async (req, res) => {
+  const jobId = req.params.id;
+
+  try {
+    const job = await Job.findById(jobId);
+    const jobBooking = await JobBooking.findOne({ jobId }); // use this if jobId is a field in JobBooking
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+    if (!jobBooking) {
+      return res.status(404).json({ message: "Job booking not found" });
+    }
+
+    job.status = "inProgress";
+    job.updatedAt = new Date();
+
+    jobBooking.status = "inProgress";
+    jobBooking.updatedAt = new Date();
+
+    await job.save();
+    await jobBooking.save();
+
+    res
+      .status(200)
+      .json({ message: "Job and booking status updated successfully", job });
+  } catch (error) {
+    console.error("Error updating job status:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const completeJob = async (req, res) => {
+  const jobId = req.params.id;
+  try {
+    const job = await Job.findById({ _id: jobId });
+    const jobBooking = await JobBooking.findOne({ jobId }); // use this if jobId is a field in JobBooking
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+    if (!jobBooking) {
+      return res.status(404).json({ message: "Job booking not found" });
+    }
+
+    job.status = "completed";
+    job.updatedAt = new Date();
+
+    jobBooking.status = "completed";
+    jobBooking.updatedAt = new Date();
+
+    await job.save();
+    await jobBooking.save();
+
+    res
+      .status(200)
+      .json({ message: "Job and booking status updated successfully", job });
+  } catch (error) {
+    console.error("Error updating job status:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getCompletedJobsByUser = async (req, res) => {
+  const userId = req.user._id;
+  try {
+    const completedJobs = await JobBooking.find({
+      appliedBy: userId,
+      status: "completed",
+    }).populate("jobId", "title description"); // only fetch title and description from Job
+
+    res.status(200).json(completedJobs);
+  } catch (error) {
+    console.error("Error fetching completed jobs:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
+  getCompletedJobsByUser,
+  completeJob,
+  acceptJob,
   applyJob,
   getAllJob,
   jobfetch,

@@ -6,11 +6,6 @@ const jobSchema = new mongoose.Schema({
     ref: "User",
     required: [true, "User ID is required"],
   },
-  jobUniqueId: {
-    type: String,
-    required: [true, "Job ID is required"],
-  },
-
   title: {
     type: String,
     required: [true, "Task title is required"],
@@ -52,7 +47,7 @@ const jobSchema = new mongoose.Schema({
 
   status: {
     type: String,
-    enum: ["open", "running", "completed", "applied"],
+    enum: ["open", "inProgress", "completed", "applied"],
     default: "open",
   },
   createdAt: {

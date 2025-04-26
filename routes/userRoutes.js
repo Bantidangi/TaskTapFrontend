@@ -7,6 +7,9 @@ const {
   getAllJob,
   applyJob,
   getAppliedJobs,
+  acceptJob,
+  completeJob,
+  getCompletedJobsByUser,
 } = require("../controllers/jobPostController");
 const authenticateToken = require("../middleware/authozirationToken");
 
@@ -18,5 +21,8 @@ router.get("/jobget", authenticateToken, jobfetch);
 router.get("/getAllJob", getAllJob);
 router.post("/applyjob/:id?", authenticateToken, applyJob);
 router.get("/applied-job", authenticateToken, getAppliedJobs);
+router.post("/acceptJob/:id", authenticateToken, acceptJob);
+router.post("/completejob/:id", authenticateToken, completeJob);
+router.get("/completedjobget", authenticateToken, getCompletedJobsByUser);
 
 module.exports = router;

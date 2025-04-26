@@ -19,7 +19,7 @@ const JobBookingSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "confirmed", "applied", "cancelled", "inProgress"],
+      enum: ["pending", "completed", "applied", "cancelled", "inProgress"],
     },
   },
   {
