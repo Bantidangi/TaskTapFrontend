@@ -1,66 +1,60 @@
 import React from "react";
-
-const jobApplications = [
-  {
-    id: 1,
-    applicant: "John Doe",
-    jobTitle: "Backend Developer",
-    submittedAt: "April 8, 2025",
-    resume: "johndoe_resume.pdf",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    applicant: "Sarah Kim",
-    jobTitle: "Marketing Specialist",
-    submittedAt: "April 6, 2025",
-    resume: "sarahkim_cv.pdf",
-    status: "Reviewed",
-  },
-  {
-    id: 3,
-    applicant: "Ahmed Khan",
-    jobTitle: "Graphic Designer",
-    submittedAt: "April 4, 2025",
-    resume: "ahmedkhan_portfolio.pdf",
-    status: "Interview Scheduled",
-  },
-];
+import providerGetJobList from "./getOnJobHTTP/providerGetJob";
+import useAcceptMutation from "./getOnJobHTTP/useProviderJobMutation";
 
 const JobApplications = () => {
+  const { data = [], isLoading, isError } = providerGetJobList();
+
+  const { mutate, isPending } = useAcceptMutation();
+  const handleJobAppccept = (id) => {
+    mutate(id);
+  };
+
+
+  if (isLoading) {
+    return <div className="p-6">Loading tasks...</div>;
+  }
+
+  if (isError) {
+    return <div className="p-6 text-red-600">Failed to load tasks.</div>;
+  }
+
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">Job Applications</h2>
+      <h2 className="text-2xl font-semibold mb-4">Posted Tasks</h2>
       <div className="grid gap-4">
-        {jobApplications.map((app) => (
+        {data.map((task) => (
           <div
-            key={app.id}
+            key={task._id}
             className="p-5 bg-white shadow rounded-lg border hover:shadow-md transition"
           >
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="text-lg font-bold">{app.applicant}</h3>
-              <span
-                className={`text-sm px-2 py-1 rounded-full font-medium ${
-                  app.status === "Pending"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : app.status === "Reviewed"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-blue-100 text-blue-700"
-                }`}
-              >
-                {app.status}
-              </span>
-            </div>
-            <p className="text-sm text-gray-700">
-              Applied for: <span className="font-medium">{app.jobTitle}</span>
+            <h3 className="text-lg font-bold mb-2">{task.title}</h3>
+            <p className="text-sm text-gray-700 mb-1">
+              <strong>Description:</strong> {task.description}
             </p>
-            <p className="text-sm text-gray-500">Submitted: {app.submittedAt}</p>
-            <a
-              href="#"
-              className="text-sm text-indigo-600 underline mt-2 inline-block"
-            >
-              View Resume ({app.resume})
-            </a>
+            <p className="text-sm text-gray-700 mb-1">
+              <strong>Location:</strong> {task.location}
+            </p>
+            <p className="text-sm text-gray-700 mb-1">
+              <strong>Date and Time:</strong>{" "}
+              {new Date(task.dateTime).toLocaleString()}
+            </p>
+            <p className="text-sm text-gray-700 mb-1">
+              <strong>Duration:</strong> {task.duration} hours
+            </p>
+            <p className="text-sm text-gray-700 mb-2">
+              <strong>Pay Offered:</strong> ${task.payOffered}
+            </p>
+
+            {/* Show Accept button if applications exist */}
+            {task.applications && task.applications.length > 0 && (
+              <button
+                className="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+                onClick={() => handleJobAppccept(task._id)}
+              >
+                Accept
+              </button>
+            )}
           </div>
         ))}
       </div>

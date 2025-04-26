@@ -1,12 +1,13 @@
 import React from "react";
 import useGetJobList from "./appliedHTTP/useGetJobList";
+import useAcceptMutation from "./getOnJobHTTP/useProviderJobMutation";
+import useCompleteMutation from "./appliedHTTP/useCompleteMutation";
 
 const AppliedJobs = () => {
   const { data, isLoading, isError } = useGetJobList();
-
-  const handleComplete = (jobId) => {
-    // Add your complete job API call here
-    console.log("Mark as completed:", jobId);
+  const { mutate, isPending } = useCompleteMutation();
+  const handleComplete = (id) => {
+    mutate(id);
   };
 
   if (isLoading) {
@@ -49,7 +50,7 @@ const AppliedJobs = () => {
 
             {job.status === "inProgress" && (
               <button
-                onClick={() => handleComplete(job.jobId)}
+                onClick={() => handleComplete(job.id)}
                 className="mt-3 px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700">
                 Mark as Completed
               </button>

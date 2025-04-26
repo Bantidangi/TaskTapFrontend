@@ -1,4 +1,5 @@
 import React from "react";
+import getJobCompleted from "./getOnJobHTTP/getCompletedJobs";
 
 const completedJobs = [
   {
@@ -25,6 +26,10 @@ const completedJobs = [
 ];
 
 const CompletedJobs = () => {
+  const { data: completedJobs, isLoading } = getJobCompleted();
+   if(isLoading){
+    return <div>...Loading</div>
+   }
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-4">Completed Jobs</h2>
@@ -32,15 +37,16 @@ const CompletedJobs = () => {
         {completedJobs.map((job) => (
           <div
             key={job.id}
-            className="p-4 bg-white rounded-lg shadow hover:shadow-md border"
-          >
-            <h3 className="text-lg font-bold">{job.title}</h3>
-            <p className="text-sm text-gray-600">{job.company}</p>
+            className="p-4 bg-white rounded-lg shadow hover:shadow-md border">
+            <h3 className="text-lg font-bold">{job.jobId.title}</h3>
+            <p className="text-sm text-gray-600">{job.jobId.description}</p>
             <p className="text-sm text-gray-500">
-              Completed on: {job.completedOn}
-            </p>
-            <p className="text-sm font-medium mt-1 text-green-600">
-              Earned: {job.earnings}
+              Completed on:{" "}
+              {new Date(job.updatedAt).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
             </p>
           </div>
         ))}
