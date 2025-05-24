@@ -85,18 +85,7 @@ const Navbar = () => {
           {isAuthorized ? (
             // Profile Icon & Dropdown
             <div className="relative flex items-center gap-4">
-              <div className="relative">
-                <AiFillMessage
-                  size="1.8em"
-                  className="text-blue-700 cursor-pointer hover:text-blue-800"
-                  onClick={toggleMsgBox}
-                />
-                {messages.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {messages.length}
-                  </span>
-                )}
-              </div>
+              
 
               <FaUserCircle
                 className="text-3xl cursor-pointer text-blue-700 hover:text-blue-800"
@@ -109,7 +98,7 @@ const Navbar = () => {
                     {user?.name}
                   </p>
                   <a
-                    href="/profile"
+                    href="/home/profile"
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
                     onClick={() => setIsProfileOpen(false)}>
                     My Profile
