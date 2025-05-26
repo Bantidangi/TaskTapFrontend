@@ -46,8 +46,15 @@ const JobApplications = () => {
               <strong>Pay Offered:</strong> ${task.payOffered}
             </p>
 
-            {/* Show Accept button if applications exist */}
-            {task.applications && task.applications.length > 0 && (
+            
+
+            {task?.isAccepted   ?  <button
+            disabled
+                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded transition"
+                
+              >
+                Accepted
+              </button>  : task.applications && task.applications.length > 0 && (
               <button
                 className="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
                 onClick={() => handleJobAppccept(task._id)}
@@ -55,6 +62,7 @@ const JobApplications = () => {
                 Accept
               </button>
             )}
+         
           </div>
         ))}
       </div>

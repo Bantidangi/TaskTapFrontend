@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 import axiosInstance from "../utils/axios";
 import { BASE_URL } from "../utils/exports";
+import { useNavigate } from "react-router-dom";
 
 interface JobPost {
   _id: string;
@@ -20,7 +21,7 @@ interface JobPost {
 const useGetJobPosts = () => {
   const fetchJobs = async (): Promise<JobPost[]> => {
     try {
-      const res = await axiosInstance.get(`${BASE_URL}/getAllJob`);
+      const res = await axiosInstance.get(`${BASE_URL}/runningJobs`);
       return res.data;
     } catch (error) {
       toast.error("Failed to fetch job posts");
@@ -34,6 +35,7 @@ const useGetJobPosts = () => {
     queryFn: fetchJobs,
   });
 };
+
 
 // Modern, efficient job card visualizer without Three.js
 const JobPostVisualizer = ({ jobs }: { jobs: JobPost[] }) => {
@@ -172,9 +174,7 @@ const JobPostVisualizer = ({ jobs }: { jobs: JobPost[] }) => {
                   </svg>
                 </button>
               </div>
-              <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-sm">
-                Edit Job
-              </button>
+            
             </div>
           </>
         )}
@@ -185,7 +185,10 @@ const JobPostVisualizer = ({ jobs }: { jobs: JobPost[] }) => {
 
 const JobPostList = () => {
   const { data: jobPosts, isLoading, error } = useGetJobPosts();
-
+const navigate = useNavigate()
+const handleNavigate = ()=>{
+  navigate("/home/post-job")
+}
   if (isLoading) {
     return (
       <div className="p-8 flex justify-center items-center">
@@ -219,7 +222,7 @@ const JobPostList = () => {
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold text-gray-800">Your Job Posts</h2>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-sm">
+        <button onClick={handleNavigate}  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-sm">
           Create New Job
         </button>
       </div>

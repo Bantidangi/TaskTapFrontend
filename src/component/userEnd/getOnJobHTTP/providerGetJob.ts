@@ -16,7 +16,7 @@ const providerGetJobList = () => {
   };
 
   return useQuery({
-    queryKey: ["createJob"],
+    queryKey: ["jobget  "],
     queryFn: getcreateJobList,
   });
 };

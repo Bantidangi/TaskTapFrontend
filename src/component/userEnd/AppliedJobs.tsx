@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import useGetJobList from "./appliedHTTP/useGetJobList";
 import useCompleteMutation from "./appliedHTTP/useCompleteMutation";
@@ -34,10 +34,15 @@ const StatusBadge: React.FC<{ status: Job["status"] }> = ({ status }) => {
 
 const AppliedJobs: React.FC = () => {
   const { data, isLoading, isError } = useGetJobList();
-  const { mutate, isPending } = useCompleteMutation();
+  const { mutateAsync, isPending } = useCompleteMutation();
+
+  const [isProccesing , setIsProccesing] = useState(false)
 
   const handleComplete = (id: string) => {
-    mutate(id);
+    setIsProccesing(true)
+    mutateAsync(id).then(()=>{
+      setIsProccesing(false)
+    })
   };
 
   const sortedJobs = useMemo(() => {
@@ -116,12 +121,12 @@ const AppliedJobs: React.FC = () => {
               </p>
             </div>
 
-            {job.status === "inProgress" && (
+            {job.status === "inProgress"  && (
               <button
-                onClick={() => handleComplete(job.id)}
+                onClick={() => handleComplete(job.jobId)}
                 disabled={isPending}
                 className="w-full mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition disabled:bg-green-400 disabled:cursor-not-allowed flex items-center justify-center">
-                {isPending ? (
+                {isProccesing === job?.jobId ? (
                   <>
                     <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>

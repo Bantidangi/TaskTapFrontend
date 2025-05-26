@@ -25,7 +25,6 @@ const Navbar = () => {
 
   const toggleMsgBox = () => {
     setIsMsgBoxOpen(!isMsgBoxOpen);
-    // Close profile menu if open when opening message box
     if (isProfileOpen) setIsProfileOpen(false);
   };
 
@@ -37,7 +36,6 @@ const Navbar = () => {
     navigate("/auth");
   };
 
-  // Mock messages data - replace with actual data from your backend
   const messages = [
     {
       id: 1,

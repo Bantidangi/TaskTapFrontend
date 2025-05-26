@@ -28,8 +28,8 @@ const Payment = () => {
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <h2 className="text-2xl font-semibold mb-6">Payment History</h2>
-
-      <div className="overflow-x-auto">
+      <h1>Coming Soon</h1>
+      {/* <div className="overflow-x-auto">
         <table className="min-w-full bg-white shadow rounded-lg overflow-hidden">
           <thead className="bg-gray-100 text-left text-gray-600 uppercase text-sm">
             <tr>
@@ -63,7 +63,7 @@ const Payment = () => {
             ))}
           </tbody>
         </table>
-      </div>
+      </div> */}
     </div>
   );
 };

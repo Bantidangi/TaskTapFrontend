@@ -27,7 +27,7 @@ const DashboardOverview = () => {
       pendingPayments: 0,
     },
     jobApplications: [],
-    runningJobs: [],
+    runningJobs:   [],
     completedJobs: [],
     paymentHistory: [],
   };
@@ -147,7 +147,7 @@ const DashboardOverview = () => {
                 <div key={job.id || job._id} className="border-l-4 border-green-500 pl-4 py-2">
                   <div className="flex justify-between">
                     <h3 className="font-medium">{job.title}</h3>
-                    <span className="font-bold">{job.pay || `$${job.payOffered || '0'}`}</span>
+                    <span className="font-bold">{"N/A"}</span>
                   </div>
                   <p className="text-sm text-gray-600">With: {job.worker || job.employer}</p>
                   <p className="text-xs text-gray-500">
@@ -177,7 +177,7 @@ const DashboardOverview = () => {
                   {paymentHistory.map((payment) => (
                     <tr key={payment.id || payment._id}>
                       <td className="px-6 py-4 whitespace-nowrap">{payment.title}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{payment.amount || `$${payment.payOffered || '0'}`}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{"N/A"}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {new Date(payment.date || payment.updatedAt).toLocaleDateString()}
                       </td>

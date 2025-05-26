@@ -12,16 +12,16 @@ const useCompleteMutation = () => {
   return useMutation({
     mutationFn: completeJob,
     onSuccess: async (res,input) => {
-      // queryClient.invalidateQueries({
-      //   queryKey: ["login"],
-      //   refetchType: "all",
-      // });
+      queryClient.invalidateQueries({
+        queryKey: ["applyJob"],
+        refetchType: "all",
+      });
 
-      toast.success(res.response.data.message)
+      toast.success(res.data.message)
     },
     onError: (res) => {
 
-      toast.error(res.response.data.message)
+      toast.error(res.data.message)
       
     },
   });

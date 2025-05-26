@@ -27,27 +27,25 @@ interface Job {
   isApplied?: boolean;
 }
 
-const useGetAvailableJobs = () => {
+const useGetAvailableJobs = (filters = {}) => {
   const fetchJobs = async (): Promise<Job[]> => {
     try {
       const response = await axiosInstance.get(`${BASE_URL}/getAllJob`);
-
-      console.log(response)
       return response.data;
     } catch {
       toast.error("Failed to fetch available jobs");
-      // Return empty array instead of throwing to avoid undefined query data
       return [];
     }
   };
 
   return useQuery({
-    queryKey: ["availableJobs"],
+    queryKey: ["getAllJob"], // queryKey is now dynamic
     queryFn: fetchJobs,
     refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 };
+
 
 const AvailableJobs: React.FC = () => {
   const { data: availableJobs, isLoading, error, refetch } = useGetAvailableJobs();

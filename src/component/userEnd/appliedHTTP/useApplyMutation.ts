@@ -3,34 +3,28 @@ import axiosInstance from "../../utils/axios";
 import { BASE_URL } from "../../utils/exports";
 import toast from "react-hot-toast";
 
-
-
 async function applyJob(id) {
-  return axiosInstance.post(`${BASE_URL}/applyjob/${id}`, );
+  return axiosInstance.post(`${BASE_URL}/applyjob/${id}`);
 }
+
 const useApplyMutation = () => {
-
-
-
-   const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: applyJob,
 
-    onSuccess: async (res, input) => {
-
-
+    onSuccess: async (res) => {
+      // Invalidate the job list query to refetch updated data
       queryClient.invalidateQueries({
-        queryKey: ["login"],
-        refetchType: "all",
+        queryKey: ["getAllJob"],
+        refetchType: "active",
       });
 
-      toast.success(res.response.data.message)
+      toast.success(res?.data?.message || "Job applied successfully");
     },
-    onError: (res) => {
 
-      toast.error(res.response.data.message)
-      
+    onError: (error) => {
+      toast.error(error?.response?.data?.message || "Failed to apply for job");
     },
   });
 };

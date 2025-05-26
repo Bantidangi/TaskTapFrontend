@@ -14,13 +14,13 @@ const useAcceptMutation = () => {
 
     onSuccess: async (res, input) => {
       queryClient.invalidateQueries({
-        queryKey: ["createJob"],
+        queryKey: ["jobget"],
       });
 
-      toast.success(res.response.data.message);
+      toast.success(res.data.message);
     },
     onError: (res) => {
-      toast.error(res.response.data.message);
+      toast.error(res.data.message);
     },
   });
 };
